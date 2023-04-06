@@ -33,11 +33,20 @@ export default function Home() {
               alt="hero image"
             />
           </div>
-          <Card
-            hrefLink="/coffee-store/starbucks"
-            shopName="Starbucks"
-            imageURL="/static/hero-image.png"
-          />
+          <div className={styles.cardLayout}>
+            <Card
+              className={styles.card}
+              hrefLink="/coffee-store/starbucks"
+              shopName="Starbucks"
+              imageURL="/static/hero-image.png"
+            />
+            <Card
+              className={styles.card}
+              hrefLink="/coffee-store/starbucks"
+              shopName="Starbucks"
+              imageURL="/static/hero-image.png"
+            />
+          </div>
         </main>
       </div>
     </React.Fragment>
