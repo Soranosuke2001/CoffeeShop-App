@@ -25,5 +25,5 @@ export default function Home() {
         </main>
       </div>
     </React.Fragment>
-  )
-}
+  );
+};
