@@ -12,8 +12,6 @@ import useTrackLocation from "@/hooks/use-track-location";
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
 
-  console.log(coffeeStores)
-
   return {
     props: {
       coffeeStores,
@@ -23,7 +21,6 @@ export async function getStaticProps(context) {
 
 export default function Home(props) {
   const { handleTrackLocation, latLong, locationErrorMsg, findingLocation } = useTrackLocation();
-  console.log(latLong)
 
   const [coffeeStores, setCoffeeStores] = useState(null);
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
@@ -33,9 +30,9 @@ export default function Home(props) {
       if (latLong) {
         try {
           const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
-          setCoffeeStores(fetchCoffeeStores);
+          setCoffeeStores(fetchedCoffeeStores);
         } catch (error) {
-          setCoffeeStoresError(err.message);
+          setCoffeeStoresError(error.message);
         };
       };
     };
@@ -61,7 +58,7 @@ export default function Home(props) {
             buttonText={findingLocation ? "Locating..." : "View Stores Nearby"}
             searchShops={searchShopsHandler}
           />
-          {locationErrorMsg && <p>Something Went Wrong: {locationErrorMsg}</p>}
+          {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
           {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
           <div className={styles.heroImage}>
             <Image
@@ -71,8 +68,7 @@ export default function Home(props) {
               alt="hero image"
             />
           </div>
-          {coffeeStores && console.log(coffeeStores)}
-          {/* {coffeeStores && (
+          {coffeeStores && (
             <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Stores Near Me</h2>
               <div className={styles.cardLayout}>
@@ -89,7 +85,7 @@ export default function Home(props) {
                 })}
               </div>
             </div>
-          )} */}
+          )}
           {props.coffeeStores && (
             <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Toronto Stores</h2>
