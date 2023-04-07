@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -23,12 +23,29 @@ export async function getStaticProps(context) {
 
 export default function Home(props) {
   const { handleTrackLocation, latLong, locationErrorMsg, findingLocation } = useTrackLocation();
+  console.log(latLong)
 
+  const [coffeeStores, setCoffeeStores] = useState(null);
+  const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+
+  useEffect(() => {
+    async function setCoffeeStoresByLocation() {
+      if (latLong) {
+        try {
+          const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
+          setCoffeeStores(fetchCoffeeStores);
+        } catch (error) {
+          setCoffeeStoresError(err.message);
+        };
+      };
+    };
+
+    setCoffeeStoresByLocation();
+  }, [latLong])
+  
   const searchShopsHandler = () => {
     console.log("button was clicked");
     handleTrackLocation();
-    console.log(latLong)
-
   };
 
   return (
@@ -45,6 +62,7 @@ export default function Home(props) {
             searchShops={searchShopsHandler}
           />
           {locationErrorMsg && <p>Something Went Wrong: {locationErrorMsg}</p>}
+          {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
           <div className={styles.heroImage}>
             <Image
               src="/static/hero-image.png"
@@ -53,7 +71,26 @@ export default function Home(props) {
               alt="hero image"
             />
           </div>
-          {props.coffeeStores ? (
+          {coffeeStores && console.log(coffeeStores)}
+          {/* {coffeeStores && (
+            <div className={styles.sectionWrapper}>
+              <h2 className={styles.heading2}>Stores Near Me</h2>
+              <div className={styles.cardLayout}>
+                {coffeeStores.map((store) => {
+                  return (
+                    <Card
+                      key={store.id}
+                      className={styles.card}
+                      hrefLink={`/coffee-store/${store.id}`}
+                      shopName={store.name}
+                      imageURL={store.imageURL}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )} */}
+          {props.coffeeStores && (
             <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Toronto Stores</h2>
               <div className={styles.cardLayout}>
@@ -70,10 +107,6 @@ export default function Home(props) {
                 })}
               </div>
             </div>
-          ) : (
-            <h2 className={styles.heading2}>
-              There were no coffee shops found in the area
-            </h2>
           )}
         </main>
       </div>
