@@ -9,8 +9,18 @@ const table = base('Coffee-Stores');
 
 console.log(table)
 
-const createCoffeeStore = (req, res) => {
-    res.json({ message: 'this is working' })
+const createCoffeeStore = async (req, res) => {
+    if (req.method === 'POST') {
+        const findRecord = await table.select({
+            filterByFormula: `storeid="0"`
+        }).firstPage();
+    
+        if (findRecord.length !== 0) {
+            res.json(findRecord);
+        } else {
+            res.json({ message: 'create a record' })
+        }
+    }
 };
 
 export default createCoffeeStore;
