@@ -7,19 +7,28 @@ const base = new Airtable({
 
 const table = base('Coffee-Stores');
 
-console.log(table)
-
 const createCoffeeStore = async (req, res) => {
     if (req.method === 'POST') {
-        const findRecord = await table.select({
-            filterByFormula: `storeid="0"`
-        }).firstPage();
-    
-        if (findRecord.length !== 0) {
-            res.json(findRecord);
-        } else {
-            res.json({ message: 'create a record' })
-        }
+        try {
+            const findRecord = await table.select({
+                filterByFormula: `storeid="0"`
+            }).firstPage();
+        
+            if (findRecord.length !== 0) {
+                const CoffeeShop = findRecord.map((record) => {
+                    return {
+                        ...record.fields
+                    };
+                });
+                res.json(CoffeeShop);
+            } else {
+                res.json({ message: 'create a record' });
+            };
+        } catch (error) {
+            console.log('there was an error: ', error);
+            res.status(500);
+            res.json({ message: 'Something went wrong', error });
+        };
     }
 };
 
