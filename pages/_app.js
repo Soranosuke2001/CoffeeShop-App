@@ -20,7 +20,7 @@ const storeReducer = (state, action) => {
 
     case ACTION_TYPES.SET_COFFEE_STORES: {
       return {
-        ...latLong,
+        ...state,
         coffeeStores: action.payload.coffeeStores
       };
     }
