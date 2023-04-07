@@ -10,12 +10,13 @@ import styles from "../../styles/coffee-store.module.css";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
+  const findCoffeeStoreId = coffeeStores.find((coffeeStore) => {
+    return coffeeStore.id.toString() === params.storeId;
+  })
 
   return {
     props: {
-      coffeeStore: coffeeStores.find((coffeeStore) => {
-        return coffeeStore.id.toString() === params.storeId;
-      }),
+      coffeeStore: findCoffeeStoreId ? findCoffeeStoreId : {},
     },
   };
 }
@@ -44,7 +45,7 @@ const CoffeeStore = (props) => {
     return <div>Loading...</div>;
   }
 
-  const { id, name, formatted_address, locality, region, imageURL } =
+  const { name, formatted_address, locality, region, imageURL } =
     props.coffeeStore;
 
   const upvoteButtonHandler = () => {
@@ -66,7 +67,7 @@ const CoffeeStore = (props) => {
           </div>
           <Image
             className={styles.storeImg}
-            src={imageURL}
+            src={imageURL || '/static/404-Not-Found.jpg'}
             alt={`store front image of ${name}`}
             width={600}
             height={360}
