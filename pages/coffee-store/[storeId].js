@@ -9,6 +9,19 @@ import cls from "classnames";
 import styles from "../../styles/coffee-store.module.css";
 
 export function getStaticProps({ params }) {
+    const options = {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            Authorization: 'fsq3e73jZKnoWFKrvpwbHVZGc9a3s9TNcPARsBqBIv/vqeM='
+        }
+    };
+
+    fetch('https://api.foursquare.com/v3/places/search', options)
+        .then((response) => response.json())
+        .then((response) => console.log(response))
+        .catch((err) => console.log(err));
+        
   return {
     props: {
       coffeeStore: coffeeStoresData.find((coffeeStore) => {
