@@ -1,53 +1,74 @@
-const Airtable = require('airtable');
+const Airtable = require("airtable");
 const base = new Airtable({
-    apiKey: process.env.AIRTABLE_API_KEY
-}).base(
-    process.env.AIRTABLE_BASE_KEY
-);
+  apiKey: process.env.AIRTABLE_API_KEY,
+}).base(process.env.AIRTABLE_BASE_KEY);
 
-const table = base('Coffee-Stores');
+const table = base("Coffee-Stores");
 
 const createCoffeeStore = async (req, res) => {
-    if (req.method === 'POST') {
-        try {
-            const findRecord = await table.select({
-                filterByFormula: `storeid="1"`
-            }).firstPage();
-        
+  if (req.method === "POST") {
+    const {
+      storeId,
+      name,
+      formatted_address,
+      region,
+      locality,
+      voting,
+      imageURL,
+    } = req.body;
+    try {
+        if (storeId) {
+
+            const findRecord = await table
+              .select({
+                filterByFormula: `storeId=${storeId}`,
+              })
+              .firstPage();
+      
             if (findRecord.length !== 0) {
-                const CoffeeShop = findRecord.map((record) => {
-                    return {
-                        ...record.fields
-                    };
-                });
-                res.json(CoffeeShop);
+              const CoffeeShop = findRecord.map((record) => {
+                return {
+                  ...record.fields,
+                };
+              });
+              res.json(CoffeeShop);
             } else {
+              if (name) {
                 const newRecord = await table.create([
-                    {
-                        fields: {
-                            storeId: '1',
-                            name: 'My favourite coffee store',
-                            formatted_address: 'my address',
-                            region: 'me region',
-                            locality: 'my locality',
-                            voting: 69,
-                            imageURL: 'http://testing.image.com'
-                        }
-                    }
-                ]); 
+                  {
+                    fields: {
+                      storeId,
+                      name,
+                      formatted_address,
+                      region,
+                      locality,
+                      voting,
+                      imageURL,
+                    },
+                  },
+                ]);
                 const newShop = newRecord.map((record) => {
-                    return {
-                        ...record.fields
-                    };
+                  return {
+                    ...record.fields,
+                  };
                 });
-                res.json({ record: newShop })               
-            };
-        } catch (error) {
-            console.log('there was an error: ', error);
-            res.status(500);
-            res.json({ message: 'Something went wrong', error });
-        };
+                res.status(200);
+                res.json({ record: newShop });
+              } else {
+                res.status(422);
+                res.json({ message: "The name is required" });
+              }
+            }
+        } else {
+            res.status(422);
+            res.json({ message: "The storeId is required" });
+        }
+    } catch (error) {
+      console.log("There was an error creating or finding a store: ", error);
+      res.status(500);
+      res.json({ message: "Something went wrong", error });
     }
+  }
 };
 
 export default createCoffeeStore;
