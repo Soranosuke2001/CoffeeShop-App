@@ -9,19 +9,6 @@ import cls from "classnames";
 import styles from "../../styles/coffee-store.module.css";
 
 export function getStaticProps({ params }) {
-    const options = {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            Authorization: 'fsq3e73jZKnoWFKrvpwbHVZGc9a3s9TNcPARsBqBIv/vqeM='
-        }
-    };
-
-    fetch('https://api.foursquare.com/v3/places/search', options)
-        .then((response) => response.json())
-        .then((response) => console.log(response))
-        .catch((err) => console.log(err));
-        
   return {
     props: {
       coffeeStore: coffeeStoresData.find((coffeeStore) => {
@@ -83,15 +70,15 @@ const CoffeeStore = (props) => {
         </div>
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/places.svg" width="24" height="24" />
+            <Image src="/static/icons/places.svg" width="24" height="24" alt='location icon'/>
             <p className={styles.text}>{address}</p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/nearMe.svg" width="24" height="24" />
+            <Image src="/static/icons/nearMe.svg" width="24" height="24" alt='near me icon' />
             <p className={styles.text}>{neighbourhood}</p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/star.svg" width="24" height="24" />
+            <Image src="/static/icons/star.svg" width="24" height="24" alt='star icon' />
             <p className={styles.text}>1</p>
           </div>
           <button className={styles.upvoteButton} onClick={upvoteButtonHandler}>Upvote</button>

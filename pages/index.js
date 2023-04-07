@@ -9,9 +9,24 @@ import coffeeStoresJSON from "../data/coffee-stores.json";
 import styles from "@/styles/Home.module.css";
 
 export async function getStaticProps(context) {
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "fsq3e73jZKnoWFKrvpwbHVZGc9a3s9TNcPARsBqBIv/vqeM=",
+    },
+  };
+
+  const response = await fetch(
+    "https://api.foursquare.com/v3/places/search?query=coffee&ll=43.653833032607096%2C-79.37896808855945&limit=6",
+    options
+  );
+
+  const data = await response.json();
+
   return {
     props: {
-      coffeeStores: coffeeStoresJSON,
+      coffeeStores: data.results,
     },
   };
 }
@@ -49,17 +64,22 @@ export default function Home(props) {
                 {props.coffeeStores.map((coffeeStore) => {
                   return (
                     <Card
-                      key={coffeeStore.id}
+                      key={coffeeStore.fsq_id}
                       className={styles.card}
-                      hrefLink={`/coffee-store/${coffeeStore.id}`}
+                      hrefLink={`/coffee-store/${coffeeStore.fsq_id}`}
                       shopName={coffeeStore.name}
-                      imageURL={coffeeStore.imgUrl}
+                      // imageURL={coffeeStore.imgUrl}
+                      imageURL="https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
                     />
                   );
                 })}
               </div>
             </>
-          ) : <h2 className={styles.heading2}>There were no coffee shops found in the area</h2>}
+          ) : (
+            <h2 className={styles.heading2}>
+              There were no coffee shops found in the area
+            </h2>
+          )}
         </main>
       </div>
     </React.Fragment>
