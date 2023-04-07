@@ -6,7 +6,7 @@ import Banner from "@/components/banner";
 import Card from "@/components/card";
 import useTrackLocation from "@/hooks/use-track-location";
 import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
-import { ACTION_TYPES, storeContext } from "./_app";
+import { ACTION_TYPES, storeContext } from "../store/store-context";
 
 import styles from "@/styles/Home.module.css";
 
@@ -76,7 +76,7 @@ export default function Home(props) {
               alt="hero image"
             />
           </div>
-          {coffeeStores && (
+          {coffeeStores.length !== 0 ? (
             <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Stores Near Me</h2>
               <div className={styles.cardLayout}>
@@ -93,8 +93,8 @@ export default function Home(props) {
                 })}
               </div>
             </div>
-          )}
-          {props.coffeeStores && (
+          ) : null}
+          {props.coffeeStores && coffeeStores.length === 0 && (
             <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Toronto Stores</h2>
               <div className={styles.cardLayout}>

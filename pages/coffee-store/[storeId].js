@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import cls from "classnames";
 
 import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
-import { storeContext } from "../_app";
+import { storeContext } from "../../store/store-context";
 import { isEmpty } from "@/utils";
 
 
