@@ -2,24 +2,28 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
-import coffeeStoresData from "../../data/coffee-stores.json";
 import cls from "classnames";
+
+import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
 
 import styles from "../../styles/coffee-store.module.css";
 
-export function getStaticProps({ params }) {
+export async function getStaticProps({ params }) {
+  const coffeeStores = await fetchCoffeeStores();
+
   return {
     props: {
-      coffeeStore: coffeeStoresData.find((coffeeStore) => {
+      coffeeStore: coffeeStores.find((coffeeStore) => {
         return coffeeStore.id.toString() === params.storeId;
       }),
     },
   };
 }
 
-export function getStaticPaths() {
-  const paths = coffeeStoresData.map((coffeeStore) => {
+export async function getStaticPaths() {
+  const coffeeStores = await fetchCoffeeStores();
+
+  const paths = coffeeStores.map((coffeeStore) => {
     return {
       params: {
         storeId: coffeeStore.id.toString(),
@@ -40,11 +44,11 @@ const CoffeeStore = (props) => {
     return <div>Loading...</div>;
   }
 
-  const { address, name, neighbourhood, id, imgUrl, websiteUrl } =
+  const { id, name, formatted_address, locality, region, imageURL } =
     props.coffeeStore;
 
   const upvoteButtonHandler = () => {
-    console.log('UpVote button was pressed!');
+    console.log("UpVote button was pressed!");
   };
 
   return (
@@ -62,7 +66,7 @@ const CoffeeStore = (props) => {
           </div>
           <Image
             className={styles.storeImg}
-            src={imgUrl}
+            src={imageURL}
             alt={`store front image of ${name}`}
             width={600}
             height={360}
@@ -70,18 +74,37 @@ const CoffeeStore = (props) => {
         </div>
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/places.svg" width="24" height="24" alt='location icon'/>
-            <p className={styles.text}>{address}</p>
+            <Image
+              src="/static/icons/places.svg"
+              width="24"
+              height="24"
+              alt="location icon"
+            />
+            <p className={styles.text}>{formatted_address}</p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/nearMe.svg" width="24" height="24" alt='near me icon' />
-            <p className={styles.text}>{neighbourhood}</p>
+            <Image
+              src="/static/icons/nearMe.svg"
+              width="24"
+              height="24"
+              alt="near me icon"
+            />
+            <p className={styles.text}>
+              {locality} {region}
+            </p>
           </div>
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/star.svg" width="24" height="24" alt='star icon' />
+            <Image
+              src="/static/icons/star.svg"
+              width="24"
+              height="24"
+              alt="star icon"
+            />
             <p className={styles.text}>1</p>
           </div>
-          <button className={styles.upvoteButton} onClick={upvoteButtonHandler}>Upvote</button>
+          <button className={styles.upvoteButton} onClick={upvoteButtonHandler}>
+            Upvote
+          </button>
         </div>
       </div>
     </div>

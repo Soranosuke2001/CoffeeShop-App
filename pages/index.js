@@ -9,8 +9,9 @@ import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
 import styles from "@/styles/Home.module.css";
 
 export async function getStaticProps(context) {
-  
   const coffeeStores = await fetchCoffeeStores();
+
+  console.log(coffeeStores)
 
   return {
     props: {
@@ -45,19 +46,18 @@ export default function Home(props) {
               alt="hero image"
             />
           </div>
-          {props.coffeeStores.length !== 0 ? (
+          {props.coffeeStores ? (
             <>
               <h2 className={styles.heading2}>Toronto Stores</h2>
               <div className={styles.cardLayout}>
-                {props.coffeeStores.map((coffeeStore) => {
+                {props.coffeeStores.map((store) => {
                   return (
                     <Card
-                      key={coffeeStore.fsq_id}
+                      key={store.id}
                       className={styles.card}
-                      hrefLink={`/coffee-store/${coffeeStore.fsq_id}`}
-                      shopName={coffeeStore.name}
-                      // imageURL={coffeeStore.imgUrl}
-                      imageURL="https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+                      hrefLink={`/coffee-store/${store.id}`}
+                      shopName={store.name}
+                      imageURL={store.imageURL}
                     />
                   );
                 })}
