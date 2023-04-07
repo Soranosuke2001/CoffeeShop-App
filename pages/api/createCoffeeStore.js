@@ -11,7 +11,7 @@ const createCoffeeStore = async (req, res) => {
     if (req.method === 'POST') {
         try {
             const findRecord = await table.select({
-                filterByFormula: `storeid="0"`
+                filterByFormula: `storeid="1"`
             }).firstPage();
         
             if (findRecord.length !== 0) {
@@ -22,7 +22,25 @@ const createCoffeeStore = async (req, res) => {
                 });
                 res.json(CoffeeShop);
             } else {
-                res.json({ message: 'create a record' });
+                const newRecord = await table.create([
+                    {
+                        fields: {
+                            storeId: '1',
+                            name: 'My favourite coffee store',
+                            formatted_address: 'my address',
+                            region: 'me region',
+                            locality: 'my locality',
+                            voting: 69,
+                            imageURL: 'http://testing.image.com'
+                        }
+                    }
+                ]); 
+                const newShop = newRecord.map((record) => {
+                    return {
+                        ...record.fields
+                    };
+                });
+                res.json({ record: newShop })               
             };
         } catch (error) {
             console.log('there was an error: ', error);
