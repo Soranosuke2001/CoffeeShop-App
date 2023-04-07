@@ -54,7 +54,7 @@ export default function Home(props) {
             />
           </div>
           {props.coffeeStores ? (
-            <>
+            <div className={styles.sectionWrapper}>
               <h2 className={styles.heading2}>Toronto Stores</h2>
               <div className={styles.cardLayout}>
                 {props.coffeeStores.map((store) => {
@@ -69,7 +69,7 @@ export default function Home(props) {
                   );
                 })}
               </div>
-            </>
+            </div>
           ) : (
             <h2 className={styles.heading2}>
               There were no coffee shops found in the area
