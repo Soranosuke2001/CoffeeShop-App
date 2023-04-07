@@ -9,14 +9,13 @@ import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
 import { storeContext } from "../../store/store-context";
 import { isEmpty } from "@/utils";
 
-
 import styles from "../../styles/coffee-store.module.css";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
   const findCoffeeStoreId = coffeeStores.find((coffeeStore) => {
     return coffeeStore.id.toString() === params.storeId;
-  })
+  });
 
   return {
     props: {
@@ -49,23 +48,57 @@ const CoffeeStore = (initialProps) => {
     return <div>Loading...</div>;
   }
 
-  const storeId = router.query.storeId;
+  const storeIdQuery = router.query.storeId;
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
   const {
     state: { coffeeStores },
   } = useContext(storeContext);
 
+  const newStoreRecord = async (storeInfo) => {
+    try {
+      const { name, formatted_address, region, locality, voting, imageURL } =
+        storeInfo;
+      const storeId = storeInfo.id;
+      const response = await fetch("/api/createCoffeeStore", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          storeId,
+          name,
+          formatted_address,
+          region,
+          locality,
+          voting: voting || 0,
+          imageURL,
+        }),
+      });
+
+      const dbResponse = response.json();
+      console.log({ dbResponse });
+    } catch (error) {
+      throw new Error("Something went wrong: ", error);
+    }
+  };
+
   useEffect(() => {
     if (isEmpty(initialProps.coffeeStore)) {
       if (coffeeStores.length > 0) {
-        const findCoffeeStoreId = coffeeStores.find((store) => {
-          return store.id.toString() === storeId;
+        const coffeeStoreContext = coffeeStores.find((store) => {
+          return store.id.toString() === storeIdQuery;
         });
-        setCoffeeStore(findCoffeeStoreId);
+
+        if (coffeeStoreContext) {
+          setCoffeeStore(coffeeStoreContext);
+          newStoreRecord(coffeeStoreContext);
+        };
       };
+    } else {
+      newStoreRecord(initialProps.coffeeStore);
     }
-  }, [storeId]);
+  }, [storeIdQuery, initialProps.coffeeStore]);
 
   const { name, formatted_address, locality, region, imageURL } = coffeeStore;
 
@@ -88,7 +121,7 @@ const CoffeeStore = (initialProps) => {
           </div>
           <Image
             className={styles.storeImg}
-            src={imageURL || '/static/404-Not-Found.jpg'}
+            src={imageURL || "/static/404-Not-Found.jpg"}
             alt={`store front image of ${name}`}
             width={600}
             height={360}
