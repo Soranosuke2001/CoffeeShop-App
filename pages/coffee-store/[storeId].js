@@ -1,9 +1,12 @@
-import React from "react";
 import Link from "next/link";
+import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import coffeeStoresData from "../../data/coffee-stores.json";
-import Head from "next/head";
+import cls from "classnames";
+
+import styles from "../../styles/coffee-store.module.css";
 
 export function getStaticProps({ params }) {
   return {
@@ -16,13 +19,13 @@ export function getStaticProps({ params }) {
 }
 
 export function getStaticPaths() {
-    const paths = coffeeStoresData.map((coffeeStore) => {
-        return {
-            params: {
-                storeId: coffeeStore.id.toString()
-            }
-        };
-    });
+  const paths = coffeeStoresData.map((coffeeStore) => {
+    return {
+      params: {
+        storeId: coffeeStore.id.toString(),
+      },
+    };
+  });
 
   return {
     paths,
@@ -31,25 +34,57 @@ export function getStaticPaths() {
 }
 
 const CoffeeStore = (props) => {
-    const router = useRouter();
-    
-    if (router.isFallback) {
-        return <div>Loading...</div>
-    };
-    
-    const { address, name, neighbourhood, id, imgUrl, websiteUrl } = props.coffeeStore;
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
+  const { address, name, neighbourhood, id, imgUrl, websiteUrl } =
+    props.coffeeStore;
+
+  const upvoteButtonHandler = () => {
+    console.log('UpVote button was pressed!');
+  };
 
   return (
-    <React.Fragment>
-        <Head>
-            <title>{name}</title>
-        </Head>
-      <Link href="/">Back to home</Link>
-      <h1>{id}</h1>
-      <p>{address}</p>
-      <p>{name}</p>
-      <p>{neighbourhood}</p>
-    </React.Fragment>
+    <div className={styles.layout}>
+      <Head>
+        <title>{name}</title>
+      </Head>
+      <div className={styles.container}>
+        <div className={styles.col1}>
+          <div className={styles.backToHomeLink}>
+            <Link href="/">Back to home</Link>
+          </div>
+          <div className={styles.nameWrapper}>
+            <h1 className={styles.name}>{name}</h1>
+          </div>
+          <Image
+            className={styles.storeImg}
+            src={imgUrl}
+            alt={`store front image of ${name}`}
+            width={600}
+            height={360}
+          />
+        </div>
+        <div className={cls("glass", styles.col2)}>
+          <div className={styles.iconWrapper}>
+            <Image src="/static/icons/places.svg" width="24" height="24" />
+            <p className={styles.text}>{address}</p>
+          </div>
+          <div className={styles.iconWrapper}>
+            <Image src="/static/icons/nearMe.svg" width="24" height="24" />
+            <p className={styles.text}>{neighbourhood}</p>
+          </div>
+          <div className={styles.iconWrapper}>
+            <Image src="/static/icons/star.svg" width="24" height="24" />
+            <p className={styles.text}>1</p>
+          </div>
+          <button className={styles.upvoteButton} onClick={upvoteButtonHandler}>Upvote</button>
+        </div>
+      </div>
+    </div>
   );
 };
 
