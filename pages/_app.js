@@ -1,10 +1,10 @@
-import React, { createContext } from "react";
+import React, { createContext, useReducer } from "react";
 
 import "@/styles/globals.css";
 
-const storeContext = createContext();
+export const storeContext = createContext();
 
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   SET_LAT_LONG: 'SET_LAT_LONG',
   SET_COFFEE_STORES: 'SET_COFFEE_STORES'
 };
