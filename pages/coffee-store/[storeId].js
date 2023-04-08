@@ -78,7 +78,6 @@ const CoffeeStore = (initialProps) => {
       });
 
       const dbResponse = response.json();
-      console.log({ dbResponse });
     } catch (error) {
       throw new Error("Something went wrong: ", error);
     }
@@ -108,7 +107,6 @@ const CoffeeStore = (initialProps) => {
 
   useEffect(() => {
     if (data && data.length > 0 && !isLoading) {
-      console.log('Data from swr', data);
       setCoffeeStore(data[0]);
       setVoteCount(data[0].voting);
     }
