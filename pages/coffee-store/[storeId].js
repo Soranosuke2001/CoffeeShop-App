@@ -108,7 +108,7 @@ const CoffeeStore = (initialProps) => {
   const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById?storeId=${storeIdQuery}`, fetcher); 
 
   useEffect(() => {
-    if (data && data.length !== 0) {
+    if (data && data.length > 0 && !isLoading) {
       console.log('Data from swr', data);
       setCoffeeStore(data[0]);
       setVoteCount(data[0].voting);
