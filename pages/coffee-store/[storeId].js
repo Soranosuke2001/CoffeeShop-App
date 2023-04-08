@@ -4,10 +4,11 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import cls from "classnames";
+import useSWR from 'swr';
 
 import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
 import { storeContext } from "../../store/store-context";
-import { isEmpty } from "@/utils";
+import { isEmpty, fetcher } from "@/utils";
 
 import styles from "../../styles/coffee-store.module.css";
 
@@ -103,6 +104,29 @@ const CoffeeStore = (initialProps) => {
   const { name, formatted_address, locality, region, imageURL } = coffeeStore;
 
   const [voteCount, setVoteCount] = useState(1);
+
+  const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById?storeId=${storeIdQuery}`, fetcher); 
+
+  useEffect(() => {
+    if (data && data.length !== 0) {
+      console.log('Data from swr', data);
+      setCoffeeStore(data[0]);
+      setVoteCount(data[0].voting);
+    }
+  }, [data]);
+
+  if (error) {
+    return (
+      <React.Fragment>
+        <h1>
+          There was an error fetching the coffee store data
+        </h1>
+        <div>
+          <p>Error: {error}</p>
+        </div>
+      </React.Fragment>
+    );
+  };
 
   const upvoteButtonHandler = () => {
     console.log("UpVote button was pressed!");
