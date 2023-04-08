@@ -54,7 +54,6 @@ export default function Home(props) {
   }, [latLong])
   
   const searchShopsHandler = () => {
-    console.log("button was clicked");
     handleTrackLocation();
   };
 
