@@ -50,7 +50,7 @@ const CoffeeStore = (initialProps) => {
   }
 
   const storeIdQuery = router.query.storeId;
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {});
 
   const {
     state: { coffeeStores },
@@ -99,13 +99,12 @@ const CoffeeStore = (initialProps) => {
     } else {
       newStoreRecord(initialProps.coffeeStore);
     }
-  }, [storeIdQuery, initialProps.coffeeStore]);
+  }, [storeIdQuery, initialProps.coffeeStore, coffeeStores]);
 
   const { name, formatted_address, locality, region, imageURL } = coffeeStore;
-
-  const [voteCount, setVoteCount] = useState(1);
-
+  
   const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById?storeId=${storeIdQuery}`, fetcher); 
+  const [voteCount, setVoteCount] = useState(0);
 
   useEffect(() => {
     if (data && data.length > 0 && !isLoading) {
@@ -128,10 +127,27 @@ const CoffeeStore = (initialProps) => {
     );
   };
 
-  const upvoteButtonHandler = () => {
-    console.log("UpVote button was pressed!");
-    let count = voteCount + 1;
-    setVoteCount(count);
+  const upvoteButtonHandler = async () => {    
+    try {
+      const response = await fetch("/api/updateStoreVotes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          storeIdQuery,
+        }),
+      });
+
+      const dbResponse = await response.json()
+
+      if (dbResponse && dbResponse.length > 0) {
+        let count = voteCount + 1;
+        setVoteCount(count);
+      };
+    } catch (error) {
+      console.log("Something went wrong: ", error);
+    }
   };
 
   return (

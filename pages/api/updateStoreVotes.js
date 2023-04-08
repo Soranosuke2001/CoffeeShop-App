@@ -3,15 +3,14 @@ import { searchCoffeeStore, table } from "@/lib/airtable";
 const updateStoreVote = async (req, res) => {
     if (req.method === 'PUT') {
         try {
-            const { storeId } = req.body;
+            const { storeIdQuery } = req.body;
 
-            if (storeId) {
-                const records = await searchCoffeeStore(storeId);
+            if (storeIdQuery) {
+                const records = await searchCoffeeStore(storeIdQuery);
                 const { recordId } = records[0];
 
                 if (records.length !== 0) {
                     const newVote = parseInt(records[0].voting) + 1;
-                    console.log(newVote);
 
                     const updateRecord = await table.update([
                         {
@@ -29,7 +28,7 @@ const updateStoreVote = async (req, res) => {
                         res.json({ message: 'There was an error updating the vote count' })
                     }
                 } else {
-                    res.json({ message: `Coffee storeId: ${storeId}, could not be found` });
+                    res.json({ message: `Coffee storeId: ${storeIdQuery}, could not be found` });
                 };
             } else {
                 res.status(422);
