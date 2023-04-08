@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import cls from "classnames";
-import useSWR from 'swr';
+import useSWR from "swr";
 
 import { fetchCoffeeStores } from "@/lib/fetch-coffeeStores";
 import { storeContext } from "../../store/store-context";
@@ -46,7 +46,9 @@ const CoffeeStore = (initialProps) => {
   const router = useRouter();
 
   const storeIdQuery = router.query.storeId;
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {});
+  const [coffeeStore, setCoffeeStore] = useState(
+    initialProps.coffeeStore || {}
+  );
 
   const {
     state: { coffeeStores },
@@ -89,16 +91,25 @@ const CoffeeStore = (initialProps) => {
         if (coffeeStoreContext) {
           setCoffeeStore(coffeeStoreContext);
           newStoreRecord(coffeeStoreContext);
-        };
-      };
+        }
+      }
     } else {
       newStoreRecord(initialProps.coffeeStore);
     }
   }, [storeIdQuery, initialProps.coffeeStore, coffeeStores]);
 
-  const { name = "", formatted_address = "", locality = "", region = "", imageURL = "" } = coffeeStore;
-  
-  const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById?storeId=${storeIdQuery}`, fetcher); 
+  const {
+    name,
+    formatted_address,
+    locality,
+    region,
+    imageURL,
+  } = coffeeStore;
+
+  const { data, error, isLoading } = useSWR(
+    `/api/getCoffeeStoreById?storeId=${storeIdQuery}`,
+    fetcher
+  );
   const [voteCount, setVoteCount] = useState(0);
 
   useEffect(() => {
@@ -111,21 +122,19 @@ const CoffeeStore = (initialProps) => {
   if (error) {
     return (
       <React.Fragment>
-        <h1>
-          There was an error fetching the coffee store data
-        </h1>
+        <h1>There was an error fetching the coffee store data</h1>
         <div>
           <p>Error: {error}</p>
         </div>
       </React.Fragment>
     );
-  };
+  }
 
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
 
-  const upvoteButtonHandler = async () => {    
+  const upvoteButtonHandler = async () => {
     try {
       const response = await fetch("/api/updateStoreVotes", {
         method: "PUT",
@@ -137,12 +146,12 @@ const CoffeeStore = (initialProps) => {
         }),
       });
 
-      const dbResponse = await response.json()
+      const dbResponse = await response.json();
 
       if (dbResponse && dbResponse.length > 0) {
         let count = voteCount + 1;
         setVoteCount(count);
-      };
+      }
     } catch (error) {
       console.log("Something went wrong: ", error);
     }
