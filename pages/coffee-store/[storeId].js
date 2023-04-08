@@ -45,10 +45,6 @@ export async function getStaticPaths() {
 const CoffeeStore = (initialProps) => {
   const router = useRouter();
 
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-
   const storeIdQuery = router.query.storeId;
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {});
 
@@ -100,7 +96,7 @@ const CoffeeStore = (initialProps) => {
     }
   }, [storeIdQuery, initialProps.coffeeStore, coffeeStores]);
 
-  const { name, formatted_address, locality, region, imageURL } = coffeeStore;
+  const { name = "", formatted_address = "", locality = "", region = "", imageURL = "" } = coffeeStore;
   
   const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById?storeId=${storeIdQuery}`, fetcher); 
   const [voteCount, setVoteCount] = useState(0);
@@ -110,7 +106,7 @@ const CoffeeStore = (initialProps) => {
       setCoffeeStore(data[0]);
       setVoteCount(data[0].voting);
     }
-  }, [data]);
+  }, [data, isLoading]);
 
   if (error) {
     return (
@@ -124,6 +120,10 @@ const CoffeeStore = (initialProps) => {
       </React.Fragment>
     );
   };
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   const upvoteButtonHandler = async () => {    
     try {
